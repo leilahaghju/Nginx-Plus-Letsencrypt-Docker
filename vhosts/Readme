@@ -1,0 +1,59 @@
+It's a note from myself to explain what containers we have.
+some of our containers were in a docker network named "mytestnet" and their docker-compose were something like this:
+
+
+version: "3.7"
+
+services:
+  tokenskidoo:
+    build: .
+    image: tokenskidoo-app
+    container_name: tokenskidoo-app
+    restart: always
+    networks:
+      - mytestnet
+
+networks:
+  mytestnet:
+    external: true
+    
+    
+    
+and because of that, here in the conf file, we wrote their container name as for exmaple "tokenskidoo-app"  and the port which is written in it's Dockerfile 
+which was something like this:
+
+FROM node:16.14.2
+
+# install simple http server for serving static content
+# RUN npm install -g http-server
+
+# make the 'app' folder the current working directory
+WORKDIR /app
+
+# copy both 'package.json' and 'package-lock.json' (if available)
+COPY package*.json ./
+
+# install project dependencies
+RUN npm install
+
+# copy project files and folders to the current working directory (i.e. 'app' folder)
+COPY . .
+
+# build app for production with minification
+RUN npm run build
+
+# EXPOSE 8080
+# CMD [ "http-server", "dist" ]
+EXPOSE 3009
+
+ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=3009
+
+CMD ["npm", "run", "start"]
+
+
+
+
+so finally the ip and port will be something like this :     http://tokenskidoo-app:3009
+
+
